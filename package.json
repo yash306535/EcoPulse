@@ -12,7 +12,6 @@
     "dev:client": "npm --prefix client run dev",
     "build": "npm --prefix client install && npm --prefix client run build",
     "start": "node server/index.js",
-    "prestart": "npm rebuild better-sqlite3",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",

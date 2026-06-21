@@ -3,9 +3,11 @@ services:
     name: ecopulse
     runtime: node
     plan: free
-    buildCommand: npm install && npm run build
+    buildCommand: npm install && npm rebuild better-sqlite3 && npm run build
     startCommand: npm start
     envVars:
+      - key: NODE_VERSION
+        value: "20"
       - key: OPENAI_API_KEY
         sync: false
       - key: SERPER_API_KEY
