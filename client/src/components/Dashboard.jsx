@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import PropTypes from "prop-types";
 import { Leaf, RotateCcw } from "lucide-react";
 import FootprintHero from "./FootprintHero.jsx";
 import BreakdownCharts from "./BreakdownCharts.jsx";
@@ -65,3 +66,13 @@ export default function Dashboard({ result, onRetake }) {
     </div>
   );
 }
+
+Dashboard.propTypes = {
+  result: PropTypes.shape({
+    breakdown: PropTypes.object,
+    totals: PropTypes.object,
+    topCategory: PropTypes.string,
+    city: PropTypes.string,
+  }).isRequired,
+  onRetake: PropTypes.func.isRequired,
+};

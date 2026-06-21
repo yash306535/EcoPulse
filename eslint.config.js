@@ -45,7 +45,7 @@ export default [
       ...react.configs.flat.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       "react/react-in-jsx-scope": "off", // not needed with the modern JSX transform
-      "react/prop-types": "off", // props are documented via JSDoc instead
+      "react/prop-types": "error", // component props are validated with prop-types
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     },
   },

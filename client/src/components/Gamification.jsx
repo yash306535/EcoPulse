@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { Flame, Award, Trophy } from "lucide-react";
 import { api } from "../lib/api.js";
 
@@ -119,3 +120,11 @@ function ScoreRing({ score }) {
     </div>
   );
 }
+
+Gamification.propTypes = {
+  refreshKey: PropTypes.number,
+};
+
+ScoreRing.propTypes = {
+  score: PropTypes.number.isRequired,
+};

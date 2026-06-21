@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { Sparkles, TrendingDown } from "lucide-react";
 import { api } from "../lib/api.js";
 import { CATEGORY_META } from "../lib/format.js";
@@ -71,3 +72,7 @@ export default function InsightsPanel({ refreshKey }) {
     </div>
   );
 }
+
+InsightsPanel.propTypes = {
+  refreshKey: PropTypes.number,
+};

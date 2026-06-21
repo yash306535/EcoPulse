@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import PropTypes from "prop-types";
 import {
   LineChart,
   Line,
@@ -126,3 +127,7 @@ export default function ActivityLogger({ onLogged }) {
     </div>
   );
 }
+
+ActivityLogger.propTypes = {
+  onLogged: PropTypes.func,
+};

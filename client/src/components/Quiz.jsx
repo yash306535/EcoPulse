@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const OPTION = (value, label) => ({ value, label });
@@ -237,3 +238,29 @@ function NumberField({ label, value, onChange, step = "1" }) {
     </div>
   );
 }
+
+Quiz.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  onBack: PropTypes.func.isRequired,
+};
+
+Q.propTypes = {
+  n: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  title: PropTypes.string,
+  hint: PropTypes.string,
+  children: PropTypes.node,
+};
+
+Choices.propTypes = {
+  options: PropTypes.arrayOf(PropTypes.shape({ value: PropTypes.string, label: PropTypes.string })),
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  name: PropTypes.string,
+};
+
+NumberField.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  onChange: PropTypes.func.isRequired,
+  step: PropTypes.string,
+};

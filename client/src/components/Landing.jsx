@@ -1,4 +1,5 @@
 import { Leaf, ArrowRight, Sparkles, MapPin, LineChart } from "lucide-react";
+import PropTypes from "prop-types";
 
 export default function Landing({ onStart, hasProfile, onViewDashboard }) {
   return (
@@ -79,3 +80,15 @@ function Feature({ icon, title, text }) {
     </div>
   );
 }
+
+Landing.propTypes = {
+  onStart: PropTypes.func.isRequired,
+  hasProfile: PropTypes.bool,
+  onViewDashboard: PropTypes.func,
+};
+
+Feature.propTypes = {
+  icon: PropTypes.node,
+  title: PropTypes.string,
+  text: PropTypes.string,
+};

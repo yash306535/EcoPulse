@@ -11,6 +11,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { CATEGORY_META, round1 } from "../lib/format.js";
+import PropTypes from "prop-types";
 
 export default function BreakdownCharts({ breakdown }) {
   const data = Object.keys(CATEGORY_META).map((key) => ({
@@ -84,3 +85,7 @@ export default function BreakdownCharts({ breakdown }) {
     </div>
   );
 }
+
+BreakdownCharts.propTypes = {
+  breakdown: PropTypes.object,
+};

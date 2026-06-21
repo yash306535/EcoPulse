@@ -1,4 +1,5 @@
 import { REFERENCES } from "@shared/carbon.js";
+import PropTypes from "prop-types";
 
 const ROWS = [
   { key: "you", label: "You", color: "#1B7F6E" },
@@ -39,3 +40,7 @@ export default function ComparisonStrip({ annualTonnes = 0 }) {
     </div>
   );
 }
+
+ComparisonStrip.propTypes = {
+  annualTonnes: PropTypes.number,
+};

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { Target } from "lucide-react";
 
 const KEY = "ecopulse_goal";
@@ -70,3 +71,8 @@ export default function GoalCard({ weeklyBaseline = 0, weeklyNet = 0 }) {
     </div>
   );
 }
+
+GoalCard.propTypes = {
+  weeklyBaseline: PropTypes.number,
+  weeklyNet: PropTypes.number,
+};

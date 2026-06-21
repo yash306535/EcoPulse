@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { Newspaper, ExternalLink } from "lucide-react";
 import { api } from "../lib/api.js";
 import Skeleton from "./Skeleton.jsx";
@@ -63,3 +64,7 @@ export default function NewsPulse({ category }) {
     </div>
   );
 }
+
+NewsPulse.propTypes = {
+  category: PropTypes.string,
+};

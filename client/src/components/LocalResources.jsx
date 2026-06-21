@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { MapPin, ExternalLink } from "lucide-react";
 import { api } from "../lib/api.js";
 import Skeleton from "./Skeleton.jsx";
@@ -59,3 +60,8 @@ export default function LocalResources({ category, city }) {
     </div>
   );
 }
+
+LocalResources.propTypes = {
+  category: PropTypes.string,
+  city: PropTypes.string,
+};

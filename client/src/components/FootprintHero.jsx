@@ -1,4 +1,5 @@
 import { tonnes, kg } from "../lib/format.js";
+import PropTypes from "prop-types";
 
 /**
  * Hero panel showing the headline annual footprint in tonnes plus weekly/annual context.
@@ -23,3 +24,11 @@ export default function FootprintHero({ totals }) {
     </div>
   );
 }
+
+FootprintHero.propTypes = {
+  totals: PropTypes.shape({
+    weekly: PropTypes.number,
+    annualKg: PropTypes.number,
+    annualTonnes: PropTypes.number,
+  }),
+};
