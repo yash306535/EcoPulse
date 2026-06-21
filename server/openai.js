@@ -1,8 +1,8 @@
 // All OpenAI calls live here. Never called from the browser.
 // Every call wrapped so a missing key or failure returns a valid fallback.
 import OpenAI from "openai";
-
-const MODEL = "gpt-4o-mini";
+import { OPENAI_MODEL } from "./config.js";
+import { warn } from "./logger.js";
 
 const COACH_SYSTEM_PROMPT =
   "You are EcoCoach, a friendly, encouraging carbon-footprint advisor inside a tracking app. You receive a JSON object with a user's weekly footprint broken down by category (transport, energy, food, waste, shopping), each in kg CO2e, plus their total. Identify the 1–2 categories contributing the most emissions. Return ONLY valid JSON, no markdown, no commentary outside the JSON, in this exact shape: an object with a 'tips' array of exactly 3 items (each with 'category', 'action', and 'impact' fields) and an 'encouragement' string under 25 words. Each action must be concrete and doable within a week — not generic advice like 'drive less,' but something like 'swap 2 of your 5 weekly car commutes for the bus.' Base impact estimates on directionally reasonable numbers derived from the input data.";
@@ -35,6 +35,11 @@ const FALLBACK_CHAT_REPLY =
   "I'm having trouble reaching my knowledge source right now, but here's a quick tip: small daily swaps — like one less car trip or a meat-free meal — add up to real carbon savings over a week. Try logging one today!";
 
 let client = null;
+
+/**
+ * Lazily construct the OpenAI client.
+ * @returns {OpenAI|null} the client, or null when no API key is configured
+ */
 function getClient() {
   if (client) return client;
   if (!process.env.OPENAI_API_KEY) return null;
@@ -42,6 +47,11 @@ function getClient() {
   return client;
 }
 
+/**
+ * Validate that an object matches the required coach response shape.
+ * @param {unknown} obj
+ * @returns {boolean}
+ */
 function validateCoach(obj) {
   if (!obj || !Array.isArray(obj.tips) || obj.tips.length !== 3) return false;
   for (const t of obj.tips) {
@@ -51,13 +61,19 @@ function validateCoach(obj) {
   return true;
 }
 
+/**
+ * Generate ranked, personalized footprint-reduction tips.
+ * @param {Record<string, number>} breakdown - weekly kg CO2e per category
+ * @param {{ weekly?: number }} totals - computed totals for the breakdown
+ * @returns {Promise<typeof FALLBACK_TIPS>} validated tips, or the fallback on any failure
+ */
 export async function coach(breakdown, totals) {
   const oa = getClient();
   if (!oa) return FALLBACK_TIPS;
   try {
     const payload = JSON.stringify({ breakdown, total: totals?.weekly });
     const res = await oa.chat.completions.create({
-      model: MODEL,
+      model: OPENAI_MODEL,
       temperature: 0.7,
       response_format: { type: "json_object" },
       messages: [
@@ -70,17 +86,22 @@ export async function coach(breakdown, totals) {
     if (!validateCoach(parsed)) return FALLBACK_TIPS;
     return parsed;
   } catch (err) {
-    console.error("[coach] OpenAI error, using fallback:", err.message);
+    warn("coach", `OpenAI error, using fallback: ${err.message}`);
     return FALLBACK_TIPS;
   }
 }
 
+/**
+ * Answer a free-form carbon-literacy question.
+ * @param {string} message - the user's question
+ * @returns {Promise<string>} the reply, or a friendly fallback on any failure
+ */
 export async function chat(message) {
   const oa = getClient();
   if (!oa) return FALLBACK_CHAT_REPLY;
   try {
     const res = await oa.chat.completions.create({
-      model: MODEL,
+      model: OPENAI_MODEL,
       temperature: 0.7,
       messages: [
         { role: "system", content: CHAT_SYSTEM_PROMPT },
@@ -89,7 +110,7 @@ export async function chat(message) {
     });
     return res.choices?.[0]?.message?.content?.trim() || FALLBACK_CHAT_REPLY;
   } catch (err) {
-    console.error("[chat] OpenAI error, using fallback:", err.message);
+    warn("chat", `OpenAI error, using fallback: ${err.message}`);
     return FALLBACK_CHAT_REPLY;
   }
 }

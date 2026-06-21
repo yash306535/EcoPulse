@@ -20,7 +20,9 @@ export default function ComparisonStrip({ annualTonnes = 0 }) {
       <div className="space-y-2.5">
         {rows.map((r) => (
           <div key={r.key} className="flex items-center gap-3">
-            <span className={`w-24 text-sm ${r.key === "you" ? "font-bold text-teal" : "text-slate"}`}>
+            <span
+              className={`w-24 text-sm ${r.key === "you" ? "font-bold text-teal" : "text-slate"}`}
+            >
               {r.label}
             </span>
             <div className="flex-1 bg-cream rounded-full h-5 overflow-hidden">

@@ -22,8 +22,12 @@ describe("computeBreakdown — transport", () => {
   });
 
   it("treats walk/cycle and WFH as zero transport", () => {
-    expect(computeBreakdown({ commuteMode: "walkCycle", kmPerDay: 50, daysPerWeek: 7 }).transport).toBe(0);
-    expect(computeBreakdown({ commuteMode: "wfh", kmPerDay: 50, daysPerWeek: 7 }).transport).toBe(0);
+    expect(
+      computeBreakdown({ commuteMode: "walkCycle", kmPerDay: 50, daysPerWeek: 7 }).transport
+    ).toBe(0);
+    expect(computeBreakdown({ commuteMode: "wfh", kmPerDay: 50, daysPerWeek: 7 }).transport).toBe(
+      0
+    );
   });
 
   it("adds annualized flights to transport (divided by 52)", () => {
@@ -110,7 +114,13 @@ describe("computeTotals", () => {
   });
 
   it("is deterministic for identical input (Property 1)", () => {
-    const answers = { commuteMode: "car", kmPerDay: 20, daysPerWeek: 5, monthlyKwh: 300, diet: "moderate" };
+    const answers = {
+      commuteMode: "car",
+      kmPerDay: 20,
+      daysPerWeek: 5,
+      monthlyKwh: 300,
+      diet: "moderate",
+    };
     const a = computeTotals(computeBreakdown(answers));
     const b = computeTotals(computeBreakdown(answers));
     expect(a).toEqual(b);
@@ -119,8 +129,12 @@ describe("computeTotals", () => {
 
 describe("topCategory", () => {
   it("returns the highest-emitting category", () => {
-    expect(topCategory({ transport: 5, energy: 50, food: 21, waste: 6, shopping: 8 })).toBe("energy");
-    expect(topCategory({ transport: 99, energy: 1, food: 1, waste: 1, shopping: 1 })).toBe("transport");
+    expect(topCategory({ transport: 5, energy: 50, food: 21, waste: 6, shopping: 8 })).toBe(
+      "energy"
+    );
+    expect(topCategory({ transport: 99, energy: 1, food: 1, waste: 1, shopping: 1 })).toBe(
+      "transport"
+    );
   });
 
   it("returns a valid category even for empty input", () => {

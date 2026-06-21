@@ -107,11 +107,23 @@ This plan sequences the EcoPulse build by priority. **P0 (tasks 1–9)** deliver
     { "wave": 1, "tasks": [1], "description": "Scaffold monorepo and run pipeline" },
     { "wave": 2, "tasks": [2, 3], "description": "Shared engine and database layer (parallel)" },
     { "wave": 3, "tasks": [4], "description": "Express app shell" },
-    { "wave": 4, "tasks": [5, 6, 7], "description": "Footprint, logs, and coach routes (parallel)" },
-    { "wave": 5, "tasks": [8], "description": "Frontend core loop (landing, quiz, dashboard, insights)" },
+    {
+      "wave": 4,
+      "tasks": [5, 6, 7],
+      "description": "Footprint, logs, and coach routes (parallel)"
+    },
+    {
+      "wave": 5,
+      "tasks": [8],
+      "description": "Frontend core loop (landing, quiz, dashboard, insights)"
+    },
     { "wave": 6, "tasks": [9], "description": "Daily activity logger UI — P0 checkpoint" },
     { "wave": 7, "tasks": [10], "description": "Serper client and live routes" },
-    { "wave": 8, "tasks": [11, 12, 13, 14], "description": "News, local resources, gamification/goals, chat (parallel)" },
+    {
+      "wave": 8,
+      "tasks": [11, 12, 13, 14],
+      "description": "News, local resources, gamification/goals, chat (parallel)"
+    },
     { "wave": 9, "tasks": [15], "description": "P2 polish — shareable card and animations" },
     { "wave": 10, "tasks": [16], "description": "README and demo verification" }
   ]

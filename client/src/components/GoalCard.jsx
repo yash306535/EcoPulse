@@ -16,9 +16,8 @@ export default function GoalCard({ weeklyBaseline = 0, weeklyNet = 0 }) {
   // Progress: how much of the targeted weekly reduction the user's net savings cover.
   const targetReductionKg = (weeklyBaseline * percent) / 100;
   const achievedKg = Math.max(0, -weeklyNet); // negative net = savings
-  const progress = targetReductionKg > 0
-    ? Math.min(100, Math.round((achievedKg / targetReductionKg) * 100))
-    : 0;
+  const progress =
+    targetReductionKg > 0 ? Math.min(100, Math.round((achievedKg / targetReductionKg) * 100)) : 0;
 
   return (
     <div className="card">
@@ -27,11 +26,16 @@ export default function GoalCard({ weeklyBaseline = 0, weeklyNet = 0 }) {
         <h3 className="font-bold text-lg">Monthly goal</h3>
       </div>
 
-      <label className="label" htmlFor="goal-percent">Reduce my footprint by</label>
+      <label className="label" htmlFor="goal-percent">
+        Reduce my footprint by
+      </label>
       <div className="flex items-center gap-3">
         <input
           id="goal-percent"
-          type="range" min="5" max="50" step="5"
+          type="range"
+          min="5"
+          max="50"
+          step="5"
           value={percent}
           onChange={(e) => setPercent(Number(e.target.value))}
           className="flex-1 accent-teal"
@@ -53,10 +57,14 @@ export default function GoalCard({ weeklyBaseline = 0, weeklyNet = 0 }) {
           aria-valuemax={100}
           aria-label="Weekly goal progress"
         >
-          <div className="h-full bg-teal rounded-full transition-all" style={{ width: `${progress}%` }} />
+          <div
+            className="h-full bg-teal rounded-full transition-all"
+            style={{ width: `${progress}%` }}
+          />
         </div>
         <p className="text-xs text-slate mt-2">
-          Target: save ≈ {targetReductionKg.toFixed(1)} kg/week · saved so far {achievedKg.toFixed(1)} kg
+          Target: save ≈ {targetReductionKg.toFixed(1)} kg/week · saved so far{" "}
+          {achievedKg.toFixed(1)} kg
         </p>
       </div>
     </div>

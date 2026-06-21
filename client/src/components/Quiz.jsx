@@ -59,42 +59,93 @@ export default function Quiz({ onSubmit, onBack }) {
       <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
         Let’s estimate your footprint
       </h1>
-      <p className="text-slate mt-2">Seven quick questions — about two minutes. All values are estimates.</p>
+      <p className="text-slate mt-2">
+        Seven quick questions — about two minutes. All values are estimates.
+      </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
         <Q n={1} title="Daily commute">
-          <Choices name="Commute mode" options={COMMUTE_OPTIONS} value={a.commuteMode} onChange={(v) => set("commuteMode", v)} />
+          <Choices
+            name="Commute mode"
+            options={COMMUTE_OPTIONS}
+            value={a.commuteMode}
+            onChange={(v) => set("commuteMode", v)}
+          />
           <div className="grid grid-cols-2 gap-4 mt-4">
-            <NumberField label="Round-trip km/day" value={a.kmPerDay} onChange={(v) => set("kmPerDay", v)} />
-            <NumberField label="Days/week" value={a.daysPerWeek} onChange={(v) => set("daysPerWeek", v)} />
+            <NumberField
+              label="Round-trip km/day"
+              value={a.kmPerDay}
+              onChange={(v) => set("kmPerDay", v)}
+            />
+            <NumberField
+              label="Days/week"
+              value={a.daysPerWeek}
+              onChange={(v) => set("daysPerWeek", v)}
+            />
           </div>
         </Q>
 
         <Q n={2} title="Flights in the last year">
           <div className="grid grid-cols-2 gap-4">
-            <NumberField label="Domestic flights" value={a.flightsDomestic} onChange={(v) => set("flightsDomestic", v)} />
-            <NumberField label="International flights" value={a.flightsIntl} onChange={(v) => set("flightsIntl", v)} />
+            <NumberField
+              label="Domestic flights"
+              value={a.flightsDomestic}
+              onChange={(v) => set("flightsDomestic", v)}
+            />
+            <NumberField
+              label="International flights"
+              value={a.flightsIntl}
+              onChange={(v) => set("flightsIntl", v)}
+            />
           </div>
         </Q>
 
-        <Q n={3} title="Home electricity" hint="Reference: small home ≈150/mo, medium ≈300, large ≈500+">
-          <NumberField label="Estimated monthly kWh" value={a.monthlyKwh} onChange={(v) => set("monthlyKwh", v)} />
+        <Q
+          n={3}
+          title="Home electricity"
+          hint="Reference: small home ≈150/mo, medium ≈300, large ≈500+"
+        >
+          <NumberField
+            label="Estimated monthly kWh"
+            value={a.monthlyKwh}
+            onChange={(v) => set("monthlyKwh", v)}
+          />
         </Q>
 
         <Q n={4} title="Cooking fuel" hint="LPG cylinders (14.2 kg) used per month">
-          <NumberField label="LPG cylinders / month" value={a.lpgPerMonth} step="0.5" onChange={(v) => set("lpgPerMonth", v)} />
+          <NumberField
+            label="LPG cylinders / month"
+            value={a.lpgPerMonth}
+            step="0.5"
+            onChange={(v) => set("lpgPerMonth", v)}
+          />
         </Q>
 
         <Q n={5} title="Diet">
-          <Choices name="Diet type" options={DIET_OPTIONS} value={a.diet} onChange={(v) => set("diet", v)} />
+          <Choices
+            name="Diet type"
+            options={DIET_OPTIONS}
+            value={a.diet}
+            onChange={(v) => set("diet", v)}
+          />
         </Q>
 
         <Q n={6} title="Shopping habits">
-          <Choices name="Shopping habits" options={SHOPPING_OPTIONS} value={a.shopping} onChange={(v) => set("shopping", v)} />
+          <Choices
+            name="Shopping habits"
+            options={SHOPPING_OPTIONS}
+            value={a.shopping}
+            onChange={(v) => set("shopping", v)}
+          />
         </Q>
 
         <Q n={7} title="Waste & recycling">
-          <Choices name="Waste and recycling" options={WASTE_OPTIONS} value={a.waste} onChange={(v) => set("waste", v)} />
+          <Choices
+            name="Waste and recycling"
+            options={WASTE_OPTIONS}
+            value={a.waste}
+            onChange={(v) => set("waste", v)}
+          />
         </Q>
 
         <Q n={"📍"} title="Your city" hint="Used to find real, nearby eco resources">
@@ -110,7 +161,10 @@ export default function Quiz({ onSubmit, onBack }) {
           />
         </Q>
 
-        <button type="submit" className="btn-primary inline-flex items-center gap-2 text-lg w-full justify-center">
+        <button
+          type="submit"
+          className="btn-primary inline-flex items-center gap-2 text-lg w-full justify-center"
+        >
           See my results <ArrowRight className="h-5 w-5" />
         </button>
       </form>

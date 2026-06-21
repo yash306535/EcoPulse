@@ -46,9 +46,13 @@ export default function NewsPulse({ category }) {
               >
                 <ExternalLink className="h-4 w-4 mt-1 text-slate group-hover:text-teal shrink-0" />
                 <div>
-                  <p className="font-medium text-charcoal leading-snug group-hover:text-teal">{n.title}</p>
+                  <p className="font-medium text-charcoal leading-snug group-hover:text-teal">
+                    {n.title}
+                  </p>
                   <p className="text-xs text-slate mt-0.5">
-                    {n.source}{n.source && n.date ? " · " : ""}{n.date}
+                    {n.source}
+                    {n.source && n.date ? " · " : ""}
+                    {n.date}
                   </p>
                 </div>
               </a>

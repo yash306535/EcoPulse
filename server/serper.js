@@ -1,8 +1,8 @@
 // All Serper (live search) calls live here. Never called from the browser.
 // Cache in SQLite (~30 min TTL) + last-cache + hardcoded fallback.
 import { cacheGet, cacheSet } from "./cache.js";
-
-const TTL_MS = 30 * 60 * 1000;
+import { LIVE_CACHE_TTL_MS, INPUT_LIMITS } from "./config.js";
+import { warn } from "./logger.js";
 
 const NEWS_QUERIES = {
   transport: "transport emissions India news",
@@ -56,6 +56,13 @@ const FALLBACK_RESOURCES = [
   },
 ];
 
+/**
+ * Low-level Serper API call.
+ * @param {"news"|"search"} endpoint
+ * @param {string} query
+ * @returns {Promise<object>} the raw Serper JSON response
+ * @throws if no API key is configured or the request fails
+ */
 async function serperPost(endpoint, query) {
   const key = process.env.SERPER_API_KEY;
   if (!key) throw new Error("no SERPER_API_KEY");
@@ -68,6 +75,11 @@ async function serperPost(endpoint, query) {
   return res.json();
 }
 
+/**
+ * Fetch the 3 most recent news headlines for a category, with cache + fallback.
+ * @param {string} [category="transport"]
+ * @returns {Promise<Array<{title:string,link:string,source:string,date:string}>>}
+ */
 export async function news(category = "transport") {
   const cat = NEWS_QUERIES[category] ? category : "transport";
   const cacheKey = `news:${cat}`;
@@ -83,18 +95,26 @@ export async function news(category = "transport") {
       date: n.date || "",
     }));
     if (items.length === 0) throw new Error("empty news");
-    cacheSet(cacheKey, items, TTL_MS);
+    cacheSet(cacheKey, items, LIVE_CACHE_TTL_MS);
     return items;
   } catch (err) {
-    console.error("[news] fallback:", err.message);
+    warn("news", `fallback: ${err.message}`);
     if (cached.payload) return cached.payload; // stale is better than broken
     return FALLBACK_NEWS;
   }
 }
 
+/**
+ * Fetch the top local eco resources for a category + city, with cache + fallback.
+ * @param {string} [category="transport"]
+ * @param {string} [city=""]
+ * @returns {Promise<Array<{title:string,link:string,snippet:string,domain:string}>>}
+ */
 export async function localResources(category = "transport", city = "") {
   const cat = RESOURCE_QUERIES[category] ? category : "transport";
-  const safeCity = String(city || "your area").trim().slice(0, 80);
+  const safeCity = String(city || "your area")
+    .trim()
+    .slice(0, INPUT_LIMITS.cityLength);
   const cacheKey = `local:${cat}:${safeCity.toLowerCase()}`;
   const cached = cacheGet(cacheKey);
   if (cached.fresh && cached.payload) return cached.payload;
@@ -111,10 +131,10 @@ export async function localResources(category = "transport", city = "") {
       return { title: o.title, link: o.link, snippet: o.snippet || "", domain };
     });
     if (items.length === 0) throw new Error("empty results");
-    cacheSet(cacheKey, items, TTL_MS);
+    cacheSet(cacheKey, items, LIVE_CACHE_TTL_MS);
     return items;
   } catch (err) {
-    console.error("[localResources] fallback:", err.message);
+    warn("localResources", `fallback: ${err.message}`);
     if (cached.payload) return cached.payload;
     return FALLBACK_RESOURCES;
   }

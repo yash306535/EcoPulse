@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Leaf, RotateCcw } from "lucide-react";
 import FootprintHero from "./FootprintHero.jsx";
 import BreakdownCharts from "./BreakdownCharts.jsx";
@@ -16,10 +16,16 @@ export default function Dashboard({ result, onRetake }) {
   const [logKey, setLogKey] = useState(0);
   const [weeklyNet, setWeeklyNet] = useState(0);
 
-  const refresh = () => setLogKey((k) => k + 1);
+  // Stable callback so the logger's load effect doesn't re-run every render.
+  const handleLogged = useCallback((net) => {
+    setWeeklyNet(net);
+    setLogKey((k) => k + 1);
+  }, []);
   return (
     <div className="min-h-screen">
-      <a href="#main-content" className="skip-link">Skip to content</a>
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
       <header className="max-w-6xl mx-auto w-full px-6 py-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="h-9 w-9 rounded-xl bg-teal flex items-center justify-center">
@@ -45,12 +51,7 @@ export default function Dashboard({ result, onRetake }) {
           <Gamification refreshKey={logKey} />
         </div>
 
-        <ActivityLogger
-          onLogged={(net) => {
-            setWeeklyNet(net);
-            refresh();
-          }}
-        />
+        <ActivityLogger onLogged={handleLogged} />
 
         <div className="grid lg:grid-cols-2 gap-5">
           <GoalCard weeklyBaseline={totals?.weekly || 0} weeklyNet={weeklyNet} />

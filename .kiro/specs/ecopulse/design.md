@@ -81,26 +81,36 @@ Single source of truth. Pure functions, no I/O.
 export const FACTORS = {
   commute: { car: 0.17, twoWheeler: 0.07, busMetro: 0.07, walkCycle: 0, wfh: 0 },
   flight: { domestic: 250, international: 900 },
-  grid: 0.82,            // kg CO2e / kWh
-  lpgCylinder: 42,       // kg CO2e / cylinder
+  grid: 0.82, // kg CO2e / kWh
+  lpgCylinder: 42, // kg CO2e / cylinder
   weeksPerMonth: 4.33,
   diet: { heavy: 30, moderate: 21, vegetarian: 14, vegan: 10 },
   shopping: { rarely: 2, monthly: 8, weekly: 20 },
   waste: { always: 3, sometimes: 6, never: 10 },
 };
 
-export const REFERENCES = {        // tonnes CO2e / year
-  india: 1.9, world: 4.7, eu: 6.8, usa: 14.9, parisLow: 2.0, parisHigh: 2.3,
+export const REFERENCES = {
+  // tonnes CO2e / year
+  india: 1.9,
+  world: 4.7,
+  eu: 6.8,
+  usa: 14.9,
+  parisLow: 2.0,
+  parisHigh: 2.3,
 };
 
 // answers shape:
 // { commuteMode, kmPerDay, daysPerWeek, flightsDomestic, flightsIntl,
 //   monthlyKwh, lpgPerMonth, diet, shopping, waste, city }
-export function computeBreakdown(a) { /* returns {transport,energy,food,waste,shopping} */ }
+export function computeBreakdown(a) {
+  /* returns {transport,energy,food,waste,shopping} */
+}
 export function computeTotals(breakdown) {
   // { weekly, annualKg, annualTonnes }
 }
-export function topCategory(breakdown) { /* 'transport' | ... */ }
+export function topCategory(breakdown) {
+  /* 'transport' | ... */
+}
 ```
 
 `computeBreakdown` coerces missing/invalid numbers to 0 (Requirement 2.4). All rounding for display happens in the UI, not in the engine, to keep values consistent.
@@ -109,14 +119,14 @@ export function topCategory(breakdown) { /* 'transport' | ... */ }
 
 Preset quick-add actions reuse engine factors so the dashboard updates without an API call. `deltaKg` is the weekly-equivalent impact (positive = adds emissions, negative = a reduction/saving). Examples:
 
-| Action | category | deltaKg |
-|---|---|---|
-| Took the bus instead of car (10km) | transport | -1.0 |
-| Ate vegetarian today | food | -2.3 |
-| Worked from home | transport | -1.7 |
-| AC on for 6 hrs | energy | +4.9 |
-| Recycled / segregated waste | waste | -1.0 |
-| Bought second-hand | shopping | -1.7 |
+| Action                             | category  | deltaKg |
+| ---------------------------------- | --------- | ------- |
+| Took the bus instead of car (10km) | transport | -1.0    |
+| Ate vegetarian today               | food      | -2.3    |
+| Worked from home                   | transport | -1.7    |
+| AC on for 6 hrs                    | energy    | +4.9    |
+| Recycled / segregated waste        | waste     | -1.0    |
+| Bought second-hand                 | shopping  | -1.7    |
 
 Stored exactly as posted; the weekly total is the sum of `delta_kg` over the trailing 7 days plus the baseline weekly from the profile breakdown.
 
@@ -157,18 +167,19 @@ Prepared statements exported for upsert profile, get profile, insert log, get lo
 
 All routes are mounted under `/api`. `clientId` comes from `X-Client-Id` header (falls back to body/param where noted). All external calls are wrapped in try/catch.
 
-| Method | Route | Body / Params | Returns |
-|---|---|---|---|
-| POST | `/api/footprint` | `{answers, city}` | `{breakdown, totals, topCategory}` (upserts profile) |
-| GET | `/api/footprint/:clientId` | – | saved `{city, answers, breakdown, totals, topCategory}` or 404 |
-| POST | `/api/logs` | `{category, action, deltaKg}` | `{weeklyTotal, log}` |
-| GET | `/api/logs/:clientId` | – | `{logs:[...], trend:[{date, total}], weeklyTotal}` |
-| POST | `/api/coach` | – (reads stored breakdown) | `{tips:[{category,action,impact}×3], encouragement}` |
-| POST | `/api/chat` | `{message}` | `{reply}` |
-| GET | `/api/news?category=` | query | `{items:[{title,link,source,date}]}` |
-| GET | `/api/local-resources?category=&city=` | query | `{items:[{title,link,snippet,domain}]}` |
+| Method | Route                                  | Body / Params                 | Returns                                                        |
+| ------ | -------------------------------------- | ----------------------------- | -------------------------------------------------------------- |
+| POST   | `/api/footprint`                       | `{answers, city}`             | `{breakdown, totals, topCategory}` (upserts profile)           |
+| GET    | `/api/footprint/:clientId`             | –                             | saved `{city, answers, breakdown, totals, topCategory}` or 404 |
+| POST   | `/api/logs`                            | `{category, action, deltaKg}` | `{weeklyTotal, log}`                                           |
+| GET    | `/api/logs/:clientId`                  | –                             | `{logs:[...], trend:[{date, total}], weeklyTotal}`             |
+| POST   | `/api/coach`                           | – (reads stored breakdown)    | `{tips:[{category,action,impact}×3], encouragement}`           |
+| POST   | `/api/chat`                            | `{message}`                   | `{reply}`                                                      |
+| GET    | `/api/news?category=`                  | query                         | `{items:[{title,link,source,date}]}`                           |
+| GET    | `/api/local-resources?category=&city=` | query                         | `{items:[{title,link,snippet,domain}]}`                        |
 
 ### `/api/coach` behavior
+
 1. Look up profile breakdown for `clientId`. If absent, use a neutral default breakdown.
 2. Check per-client in-memory cache (TTL ~3 min) — return if fresh.
 3. Call OpenAI with the verbatim EcoCoach system prompt and the breakdown JSON as the user message; request JSON response.
@@ -176,9 +187,11 @@ All routes are mounted under `/api`. `clientId` comes from `X-Client-Id` header 
 5. Cache and return.
 
 ### `/api/chat` behavior
+
 - Verbatim EcoBot system prompt, `gpt-4o-mini`, message from body. On error → `{reply: "<friendly fallback>"}`.
 
 ### `/api/news` and `/api/local-resources` behavior
+
 - Build query from category (news) or category+city (resources).
 - Cache key e.g. `news:transport` / `local:transport:Bengaluru`. If fresh cache → return it.
 - Else call Serper (`/news` or `/search`) with `X-API-KEY` header. Map results to the return shape, store in cache with TTL (~30 min). On error → return last cached payload if any, else hardcoded fallback list.
@@ -190,12 +203,25 @@ Uses the official `openai` SDK with `OPENAI_API_KEY`. Model `gpt-4o-mini`. `coac
 - `COACH_SYSTEM_PROMPT` and `CHAT_SYSTEM_PROMPT` exactly as specified in the brief Section 8.
 
 `FALLBACK_TIPS` (hardcoded, used on any failure):
+
 ```json
 {
   "tips": [
-    {"category":"transport","action":"Swap 2 car commutes this week for bus or cycling","impact":"~3 kg CO2e saved"},
-    {"category":"food","action":"Make 3 dinners vegetarian this week","impact":"~5 kg CO2e saved"},
-    {"category":"energy","action":"Set AC to 26°C and cut 1 hour of daily use","impact":"~4 kg CO2e saved"}
+    {
+      "category": "transport",
+      "action": "Swap 2 car commutes this week for bus or cycling",
+      "impact": "~3 kg CO2e saved"
+    },
+    {
+      "category": "food",
+      "action": "Make 3 dinners vegetarian this week",
+      "impact": "~5 kg CO2e saved"
+    },
+    {
+      "category": "energy",
+      "action": "Set AC to 26°C and cut 1 hour of daily use",
+      "impact": "~4 kg CO2e saved"
+    }
   ],
   "encouragement": "Small swaps add up fast — you've got this!"
 }
@@ -213,12 +239,15 @@ Hardcoded fallback arrays for both, used when no key/no cache/error.
 ## Frontend
 
 ### State machine (`App.jsx`)
+
 `view` ∈ {`landing`, `quiz`, `dashboard`}. On mount: ensure `clientId`; attempt `GET /api/footprint/:clientId` — if found, allow jumping to dashboard. Quiz submit → compute locally → set dashboard data → switch view → fire-and-forget POST.
 
 ### API wrapper (`lib/api.js`)
+
 Single `request()` injecting `X-Client-Id` and base URL. In dev, Vite proxies `/api` to `http://localhost:5000`; in prod, same origin. Every call is `try/catch`; callers handle fallbacks.
 
 ### Components
+
 - **Landing** — hero copy, problem statement, CTA, "view my dashboard" if profile exists.
 - **Quiz** — 7-step (or single scroll) form with reference hints, validation-to-0, city field.
 - **Dashboard** — composes FootprintHero, BreakdownCharts (Recharts donut + bar), ComparisonStrip, InsightsPanel, ActivityLogger; (P1) NewsPulse, LocalResources, Gamification, GoalCard, ChatWidget.
@@ -226,13 +255,15 @@ Single `request()` injecting `X-Client-Id` and base URL. In dev, Vite proxies `/
 - **ActivityLogger** — preset chips + custom add; posts log, refetches trend, renders Recharts line over 7 days; optimistic weekly-total update.
 
 ### Theme (`index.css` / `tailwind.config.js`)
+
 Light theme only. Tokens:
+
 - background `#FAF9F6` (warm off-white)
 - surface `#FFFFFF` cards with soft shadow, rounded-2xl
 - primary accent `#1B7F6E` (teal) / `#2F6B4F` (forest green) for CTAs + hero number + chart highlight
 - secondary muted sand/amber `#E0B橙`-style muted (`#D9A86C`) for badges
 - text charcoal `#2B2B2B`, never pure black
-No dark mode, no neon, no glassmorphism.
+  No dark mode, no neon, no glassmorphism.
 
 ## Build & Run
 
@@ -248,38 +279,46 @@ No dark mode, no neon, no glassmorphism.
 ## Correctness Properties
 
 ### Property 1: Determinism
+
 For identical quiz answers, `computeBreakdown`/`computeTotals` SHALL return identical results on client and server (same shared constants).
 **Validates: Requirements 3.1, 3.7**
 
 ### Property 2: No-NaN
+
 Any missing or non-numeric input is coerced to 0; totals are always finite numbers ≥ 0.
 **Validates: Requirements 2.4, 3.7**
 
 ### Property 3: Engine/logger consistency
+
 Daily logger `deltaKg` values are derived from the same `FACTORS`, so dashboard updates stay consistent with the quiz baseline.
 **Validates: Requirements 6.1, 6.2**
 
 ### Property 4: Graceful degradation
+
 For every external call (OpenAI, Serper), a failure path returns a valid, schema-correct fallback; the UI never renders undefined/blank where data is expected.
 **Validates: Requirements 5.4, 8.4, 9.3, 12.3, 15.4**
 
 ### Property 5: Identity isolation
+
 All reads/writes are scoped to `clientId`; one user's logs or profile never leak into another's queries.
 **Validates: Requirements 7.1, 7.2**
 
 ### Property 6: Cache safety
+
 Expired cache entries are never returned as "fresh"; on live-call failure the last cached payload (even if expired) may be used as a fallback, clearly preferred over a hard error.
 **Validates: Requirements 8.3, 8.4, 9.3**
 
 ## Error Handling
 
 ### Error Handling & Degradation
+
 - Core loop (quiz→dashboard→logger) uses client compute + local state; fully functional offline of external APIs.
 - Every OpenAI/Serper call wrapped in try/catch returning fallbacks.
 - Missing env keys → fallbacks, not crashes.
 - Frontend network errors → skeletons resolve into fallback content or friendly empty states.
 
 ## Testing Strategy
+
 - Unit-test `shared/carbon.js` against the worked examples (commute, flights, electricity, LPG, diet, shopping, waste, totals, topCategory).
 - Manual/integration check of each route with a sample `X-Client-Id` (footprint upsert+get, logs insert+trend, coach fallback when no key, news/resources fallback when no key).
 - Smoke test the full loop in the browser with keys absent (must work) and present (must enrich).

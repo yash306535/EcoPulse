@@ -11,10 +11,7 @@ router.get("/news", async (req, res) => {
 
 // GET /api/local-resources?category=transport&city=Bengaluru
 router.get("/local-resources", async (req, res) => {
-  const items = await localResources(
-    req.query.category || "transport",
-    req.query.city || ""
-  );
+  const items = await localResources(req.query.category || "transport", req.query.city || "");
   res.json({ items });
 });
 

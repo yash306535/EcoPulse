@@ -1,5 +1,9 @@
 import { tonnes, kg } from "../lib/format.js";
 
+/**
+ * Hero panel showing the headline annual footprint in tonnes plus weekly/annual context.
+ * @param {{ totals: { weekly?: number, annualKg?: number, annualTonnes?: number } }} props
+ */
 export default function FootprintHero({ totals }) {
   const { weekly = 0, annualKg = 0, annualTonnes = 0 } = totals || {};
   return (
@@ -14,7 +18,7 @@ export default function FootprintHero({ totals }) {
         <span className="text-2xl font-bold text-teal ml-2">t CO₂e</span>
       </div>
       <p className="text-slate">
-        ≈ {kg(annualKg)} / year · {kg(weekly)} / week
+        ≈ {kg(annualKg)} / year · {kg(weekly)} / week · {tonnes(annualTonnes)} / year
       </p>
     </div>
   );

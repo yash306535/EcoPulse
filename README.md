@@ -97,6 +97,19 @@ The API tests use `ECOPULSE_DB_PATH=":memory:"` so they never touch your real da
 - **No leaked stack traces**: a centralized error handler returns generic messages.
 - Production dependencies carry no known vulnerabilities (`npm audit`); the only advisories are in dev-only build/test tooling that never ships.
 
+## Code Quality
+
+- **ESLint** (flat config) + **Prettier** + **EditorConfig** enforce a consistent style across server, shared, and client code.
+- Centralized configuration (`server/config.js`) and a small logger keep magic numbers and logging out of business logic.
+- Public functions carry **JSDoc** describing parameters and return types.
+- A pinned Node version (`engines`) avoids host build surprises.
+
+```bash
+npm run lint          # eslint (0 warnings)
+npm run format        # prettier --write
+npm run format:check  # verify formatting in CI
+```
+
 ## Accessibility
 
 - Semantic landmarks (`header`/`main`/`footer`), a "skip to content" link, and visible keyboard focus outlines.
@@ -108,11 +121,11 @@ The API tests use `ECOPULSE_DB_PATH=":memory:"` so they never touch your real da
 
 Backend only, in `.env` (never committed):
 
-| Variable | Purpose |
-|---|---|
-| `OPENAI_API_KEY` | AI coach + chat. If absent, hardcoded fallbacks are used. |
+| Variable         | Purpose                                                                      |
+| ---------------- | ---------------------------------------------------------------------------- |
+| `OPENAI_API_KEY` | AI coach + chat. If absent, hardcoded fallbacks are used.                    |
 | `SERPER_API_KEY` | Live news + local resources. If absent, cached/hardcoded fallbacks are used. |
-| `PORT` | Server port (default `5000`). |
+| `PORT`           | Server port (default `5000`).                                                |
 
 ## Screenshots
 

@@ -27,7 +27,10 @@ export default function ChatWidget() {
     } catch {
       setMessages((m) => [
         ...m,
-        { role: "bot", text: "I'm offline for a moment — try a small swap like a meat-free meal today!" },
+        {
+          role: "bot",
+          text: "I'm offline for a moment — try a small swap like a meat-free meal today!",
+        },
       ]);
     } finally {
       setBusy(false);
@@ -42,7 +45,11 @@ export default function ChatWidget() {
         aria-label={open ? "Close EcoBot chat" : "Open EcoBot chat"}
         aria-expanded={open}
       >
-        {open ? <X className="h-6 w-6" aria-hidden="true" /> : <MessageCircle className="h-6 w-6" aria-hidden="true" />}
+        {open ? (
+          <X className="h-6 w-6" aria-hidden="true" />
+        ) : (
+          <MessageCircle className="h-6 w-6" aria-hidden="true" />
+        )}
       </button>
 
       {open && (
@@ -55,15 +62,25 @@ export default function ChatWidget() {
             <Leaf className="h-5 w-5" aria-hidden="true" />
             <span className="font-bold">Ask EcoBot</span>
           </div>
-          <div className="flex-1 overflow-y-auto p-3 space-y-3" role="log" aria-live="polite" aria-label="Conversation">
+          <div
+            className="flex-1 overflow-y-auto p-3 space-y-3"
+            role="log"
+            aria-live="polite"
+            aria-label="Conversation"
+          >
             {messages.map((m, i) => (
-              <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div
+                key={i}
+                className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+              >
                 <div
                   className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
                     m.role === "user" ? "bg-teal text-white" : "bg-cream text-charcoal"
                   }`}
                 >
-                  <span className="sr-only">{m.role === "user" ? "You said:" : "EcoBot said:"}</span>
+                  <span className="sr-only">
+                    {m.role === "user" ? "You said:" : "EcoBot said:"}
+                  </span>
                   {m.text}
                 </div>
               </div>
@@ -83,7 +100,12 @@ export default function ChatWidget() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && send()}
             />
-            <button onClick={send} className="btn-primary px-3 py-2" disabled={busy} aria-label="Send message">
+            <button
+              onClick={send}
+              className="btn-primary px-3 py-2"
+              disabled={busy}
+              aria-label="Send message"
+            >
               <Send className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>

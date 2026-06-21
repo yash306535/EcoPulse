@@ -27,7 +27,9 @@ export default function InsightsPanel({ refreshKey }) {
         <Sparkles className="h-5 w-5 text-teal" />
         <h3 className="font-bold text-lg">Your AI action plan</h3>
       </div>
-      <p className="text-sm text-slate mb-4">Concrete moves you can make this week, ranked by impact.</p>
+      <p className="text-sm text-slate mb-4">
+        Concrete moves you can make this week, ranked by impact.
+      </p>
 
       {loading ? (
         <div className="space-y-3">

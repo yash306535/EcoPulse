@@ -1,6 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
-  LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid,
+  LineChart,
+  Line,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
 } from "recharts";
 import { Plus, Check } from "lucide-react";
 import { api } from "../lib/api.js";
@@ -15,7 +21,7 @@ export default function ActivityLogger({ onLogged }) {
   const [justAdded, setJustAdded] = useState(null);
   const [error, setError] = useState(false);
 
-  const load = () => {
+  const load = useCallback(() => {
     setLoading(true);
     api
       .getLogs()
@@ -27,11 +33,11 @@ export default function ActivityLogger({ onLogged }) {
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  };
+  }, [onLogged]);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   const add = async (preset) => {
     setJustAdded(preset.action);
@@ -62,7 +68,9 @@ export default function ActivityLogger({ onLogged }) {
           </b>
         </span>
       </div>
-      <p className="text-sm text-slate mb-4">Tap what you did today — your trend updates instantly.</p>
+      <p className="text-sm text-slate mb-4">
+        Tap what you did today — your trend updates instantly.
+      </p>
 
       <div className="flex flex-wrap gap-2 mb-5">
         {PRESET_ACTIONS.map((p) => (
@@ -85,9 +93,15 @@ export default function ActivityLogger({ onLogged }) {
       {loading ? (
         <Skeleton className="h-48 w-full" />
       ) : error ? (
-        <p className="text-slate py-8 text-center">Couldn’t load your trend — log something to start.</p>
+        <p className="text-slate py-8 text-center">
+          Couldn’t load your trend — log something to start.
+        </p>
       ) : (
-        <div className="h-48" role="img" aria-label="Line chart of your net carbon emissions over the last 7 days">
+        <div
+          className="h-48"
+          role="img"
+          aria-label="Line chart of your net carbon emissions over the last 7 days"
+        >
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={trend} margin={{ left: -10, right: 10, top: 5 }}>
               <CartesianGrid stroke="#eee" vertical={false} />

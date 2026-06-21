@@ -1,35 +1,53 @@
 import { Router } from "express";
 import { statements } from "../db.js";
 import { computeBreakdown, computeTotals, topCategory, FACTORS } from "../../shared/carbon.js";
+import { INPUT_LIMITS } from "../config.js";
+import { warn } from "../logger.js";
 
 const router = Router();
 
-// Clamp a numeric field to a sane, non-negative range.
+/**
+ * Clamp a numeric field to a sane, non-negative range.
+ * @param {unknown} v
+ * @param {number} max
+ * @returns {number}
+ */
 function clampNum(v, max) {
   const n = Number(v);
   if (!Number.isFinite(n) || n < 0) return 0;
   return Math.min(n, max);
 }
 
-// Whitelist an enum value against the engine's known keys.
+/**
+ * Whitelist an enum value against the engine's known keys.
+ * @param {unknown} v
+ * @param {Record<string, unknown>} table
+ * @param {string} fallback
+ * @returns {string}
+ */
 function pickEnum(v, table, fallback) {
   return Object.prototype.hasOwnProperty.call(table, v) ? v : fallback;
 }
 
-// Validate and sanitize raw quiz answers before they reach the engine / DB.
+/**
+ * Validate and sanitize raw quiz answers before they reach the engine / DB.
+ * @param {Record<string, unknown>} raw
+ * @param {string} city
+ * @returns {object} sanitized answers
+ */
 function sanitizeAnswers(raw = {}, city = "") {
   return {
     commuteMode: pickEnum(raw.commuteMode, FACTORS.commute, "wfh"),
-    kmPerDay: clampNum(raw.kmPerDay, 2000),
-    daysPerWeek: clampNum(raw.daysPerWeek, 7),
-    flightsDomestic: clampNum(raw.flightsDomestic, 500),
-    flightsIntl: clampNum(raw.flightsIntl, 500),
-    monthlyKwh: clampNum(raw.monthlyKwh, 100000),
-    lpgPerMonth: clampNum(raw.lpgPerMonth, 100),
+    kmPerDay: clampNum(raw.kmPerDay, INPUT_LIMITS.kmPerDay),
+    daysPerWeek: clampNum(raw.daysPerWeek, INPUT_LIMITS.daysPerWeek),
+    flightsDomestic: clampNum(raw.flightsDomestic, INPUT_LIMITS.flights),
+    flightsIntl: clampNum(raw.flightsIntl, INPUT_LIMITS.flights),
+    monthlyKwh: clampNum(raw.monthlyKwh, INPUT_LIMITS.monthlyKwh),
+    lpgPerMonth: clampNum(raw.lpgPerMonth, INPUT_LIMITS.lpgPerMonth),
     diet: pickEnum(raw.diet, FACTORS.diet, "moderate"),
     shopping: pickEnum(raw.shopping, FACTORS.shopping, "monthly"),
     waste: pickEnum(raw.waste, FACTORS.waste, "sometimes"),
-    city: String(city || raw.city || "").slice(0, 80),
+    city: String(city || raw.city || "").slice(0, INPUT_LIMITS.cityLength),
   };
 }
 
@@ -53,7 +71,7 @@ router.post("/footprint", (req, res) => {
       created_at: new Date().toISOString(),
     });
   } catch (err) {
-    console.error("[footprint] db error:", err.message);
+    warn("footprint", `db error: ${err.message}`);
   }
 
   res.json({ breakdown, totals, topCategory: top, city: fullAnswers.city });

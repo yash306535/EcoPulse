@@ -101,8 +101,15 @@ function ScoreRing({ score }) {
       <svg viewBox="0 0 80 80" className="h-24 w-24 -rotate-90" aria-hidden="true">
         <circle cx="40" cy="40" r={r} fill="none" stroke="#eee" strokeWidth="8" />
         <circle
-          cx="40" cy="40" r={r} fill="none" stroke="#1B7F6E" strokeWidth="8"
-          strokeLinecap="round" strokeDasharray={c} strokeDashoffset={offset}
+          cx="40"
+          cy="40"
+          r={r}
+          fill="none"
+          stroke="#1B7F6E"
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={offset}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">

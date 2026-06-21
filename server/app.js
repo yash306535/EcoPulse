@@ -8,6 +8,8 @@ import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import "./db.js"; // ensure DB + tables are created on boot
+import { JSON_BODY_LIMIT, RATE_LIMIT } from "./config.js";
+import { warn } from "./logger.js";
 import footprintRoutes from "./routes/footprint.js";
 import logsRoutes from "./routes/logs.js";
 import coachRoutes from "./routes/coach.js";
@@ -16,6 +18,11 @@ import liveRoutes from "./routes/live.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+/**
+ * Build and configure the Express application.
+ * Exported separately from the listener so it can be imported by tests.
+ * @returns {import('express').Express} the configured app
+ */
 export function createApp() {
   const app = express();
 
@@ -41,7 +48,7 @@ export function createApp() {
 
   app.use(cors());
   // Cap request body size to limit abuse.
-  app.use(express.json({ limit: "64kb" }));
+  app.use(express.json({ limit: JSON_BODY_LIMIT }));
 
   // Attach clientId from header to every request.
   app.use((req, _res, next) => {
@@ -51,8 +58,8 @@ export function createApp() {
 
   // Rate limit the API surface (generous enough for a live demo).
   const apiLimiter = rateLimit({
-    windowMs: 60 * 1000,
-    max: 120,
+    windowMs: RATE_LIMIT.windowMs,
+    max: RATE_LIMIT.max,
     standardHeaders: true,
     legacyHeaders: false,
     message: { error: "Too many requests, please slow down." },
@@ -78,9 +85,8 @@ export function createApp() {
   }
 
   // Centralized error handler — never leak stack traces to clients.
-  // eslint-disable-next-line no-unused-vars
   app.use((err, _req, res, _next) => {
-    console.error("[error]", err.message);
+    warn("error", err.message);
     res.status(err.status || 500).json({ error: "Something went wrong." });
   });
 
